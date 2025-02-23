@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://vinahome_owner:npg_49RqHiGydKXh@ep-curly-scene-a1y4nv5o-pooler.ap-southeast-1.aws.neon.tech/vinahome?sslmode=require"
+}
+model User {
+  id Int @id @default(autoincrement())
+  username String @unique
+  password String
+  fullName String?
+  address String?
+  numberPhone String
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  @@map("tbl_users")
+}
+model Company {
+  id Int @id @default(autoincrement())
+  name String
+  phone String
+  address String?
+  note String?
+  status Boolean
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  @@map("tbl_company")
+}
+
+
+/// migrations table data: "npx prisma migrate dev"
+/// Prisma Studio: "npx prisma studio"
