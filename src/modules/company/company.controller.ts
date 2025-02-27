@@ -7,7 +7,8 @@ import { ApiResponse } from 'src/utils/api-response';
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
-  @Post('/create-company')
+  // E3.UC01: Create Company
+  @Post('/create')
   async createCompany(@Body() company: DTO_RQ_Company) {
     try {
       const companies = await this.companyService.createCompany(company);
@@ -21,7 +22,10 @@ export class CompanyController {
     }
   }
 
-  @Get('/get-all-company')
+  // E3.UC02: Update Company Information
+
+  // E3.UC03: Filter/Get List Company
+  @Get('/get-all')
   async getAllCompany() {
     try {
       const companies = await this.companyService.getAllCompany();
@@ -33,4 +37,14 @@ export class CompanyController {
       );
     }
   }
+
+  // E3.UC04: Lock Company
+
+  // E3.UC05: Filter/Get Profile Company
+
+  // E3.UC06: Delete Company
+
+  // E3.UC07: Register Sale Ticket on Platform
+
+  // E3.UC08: Filter/Get List Register Sale Ticket on Platform
 }

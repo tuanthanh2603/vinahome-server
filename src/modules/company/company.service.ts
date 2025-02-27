@@ -7,7 +7,7 @@ export class CompanyService {
   constructor(private prismaService: PrismaService) {}
 
   async createCompany(dto: DTO_RQ_Company): Promise<DTO_RP_Company> {
-    const company = await this.prismaService.company.create({
+    return this.prismaService.company.create({
       data: {
         phone: dto.phoneNumber,
         name: dto.companyName,
@@ -25,20 +25,10 @@ export class CompanyService {
         createdAt: true,
       },
     });
-
-    return {
-      id: company.id,
-      name: company.name,
-      phone: company.phone,
-      address: company.address,
-      note: company.note,
-      status: company.status,
-      createdAt: company.createdAt,
-    };
   }
 
   async getAllCompany(): Promise<DTO_RP_Company[]> {
-    const companies = await this.prismaService.company.findMany({
+    return this.prismaService.company.findMany({
       select: {
         id: true,
         name: true,
@@ -49,15 +39,5 @@ export class CompanyService {
         createdAt: true,
       },
     });
-
-    return companies.map((company) => ({
-      id: company.id,
-      name: company.name,
-      phone: company.phone,
-      address: company.address,
-      note: company.note,
-      status: company.status,
-      createdAt: company.createdAt,
-    }));
   }
 }
