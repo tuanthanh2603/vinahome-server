@@ -1,43 +1,51 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Company } from './company.entity';
 import { DTO_RP_Company, DTO_RQ_Company } from './company.dto';
-import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class CompanyService {
-  constructor(private prismaService: PrismaService) {}
-
-  async createCompany(dto: DTO_RQ_Company): Promise<DTO_RP_Company> {
-    return this.prismaService.company.create({
-      data: {
-        phone: dto.phoneNumber,
-        name: dto.companyName,
-        address: dto.address,
-        note: dto.note,
-        status: dto.status,
-      },
-      select: {
-        id: true,
-        phone: true,
-        name: true,
-        address: true,
-        note: true,
-        status: true,
-        createdAt: true,
-      },
-    });
-  }
+  constructor(
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
+  ) {}
 
   async getAllCompany(): Promise<DTO_RP_Company[]> {
-    return this.prismaService.company.findMany({
-      select: {
-        id: true,
-        name: true,
-        phone: true,
-        address: true,
-        note: true,
-        status: true,
-        createdAt: true,
-      },
-    });
+    const companies = await this.companyRepository.find();
+    const companiesMapped = companies.map((company) => ({
+      id: company.id,
+      name: company.name,
+      phone: company.phone,
+      address: company.address,
+      tax_code: company.tax_code,
+      status: company.status,
+      province: company.province,
+      district: company.district,
+      ward: company.ward,
+      url_logo: company.url_logo,
+      code: company.code,
+      note: company.note,
+      created_at: company.created_at.toISOString(),
+    }));
+    return companiesMapped;
+  }
+  async createCompany(company: DTO_RQ_Company): Promise<DTO_RP_Company> {
+    const newCompany = await this.companyRepository.save(company);
+    return {
+      id: newCompany.id,
+      name: newCompany.name,
+      phone: newCompany.phone,
+      address: newCompany.address,
+      tax_code: newCompany.tax_code,
+      status: newCompany.status,
+      province: newCompany.province,
+      district: newCompany.district,
+      ward: newCompany.ward,
+      url_logo: newCompany.url_logo,
+      code: newCompany.code,
+      note: newCompany.note,
+      created_at: newCompany.created_at.toISOString(),
+    };
   }
 }

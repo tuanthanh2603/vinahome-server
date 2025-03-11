@@ -12,3 +12,7 @@ export class DTO_RQ_PhoneLogin {
   @IsNotEmpty()
   password: string;
 }
+export class DTO_RQ_SuperAdminLogin {
+  username: string;
+  password: string;
+}

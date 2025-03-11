@@ -1,9 +1,9 @@
 import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import { DTO_RQ_Company } from './company.dto';
+import { DTO_RP_Company, DTO_RQ_Company } from './company.dto';
 import { ApiResponse } from 'src/utils/api-response';
 
-@Controller('company')
+@Controller('companies')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
@@ -26,13 +26,13 @@ export class CompanyController {
 
   // E3.UC03: Filter/Get List Company
   @Get('/get-all')
-  async getAllCompany() {
+  async getAllCompany(): Promise<ApiResponse<DTO_RP_Company[]>> {
     try {
       const companies = await this.companyService.getAllCompany();
       return ApiResponse.success(companies);
     } catch (error) {
       return ApiResponse.error(
-        'Failed to retrieve company list',
+        'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
