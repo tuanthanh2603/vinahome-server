@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { DTO_RQ_PhoneLogin, DTO_RQ_SuperAdminLogin } from './auth.dto';
+import { DTO_RQ_GoogleLogin, DTO_RQ_SuperAdminLogin } from './auth.dto';
 import { ApiResponse } from 'src/utils/api-response';
 
 @Controller('auth')
@@ -13,6 +13,19 @@ export class AuthController {
   async superAdminLogin(@Body() dto: DTO_RQ_SuperAdminLogin) {
     try {
       const response = await this.authService.superAdminLogin(dto);
+      return ApiResponse.success(response);
+    } catch (error) {
+      return ApiResponse.error(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('/google-login')
+  async googleLogin(@Body() dto: DTO_RQ_GoogleLogin) {
+    try {
+      const response = await this.authService.googleLogin(dto);
       return ApiResponse.success(response);
     } catch (error) {
       return ApiResponse.error(

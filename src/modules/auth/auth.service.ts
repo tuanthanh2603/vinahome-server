@@ -1,13 +1,20 @@
-import { Injectable } from '@nestjs/common';
-// import { PrismaService } from '../../prisma/prisma.service';
-import { DTO_RQ_PhoneLogin, DTO_RQ_Register, DTO_RQ_SuperAdminLogin } from './auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  DTO_RP_GoogleLogin,
+  DTO_RQ_GoogleLogin,
+  DTO_RQ_SuperAdminLogin,
+} from './auth.dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Account } from '../account/account.entity';
+import { Repository } from 'typeorm';
 
 @Injectable({})
 export class AuthService {
   constructor(
-    // private prismaService: PrismaService,
+    @InjectRepository(Account)
+    private readonly accountRepository: Repository<Account>,
     private jwtService: JwtService,
   ) {}
 
@@ -24,42 +31,52 @@ export class AuthService {
     };
   }
 
-  // async userRegister(dto: DTO_RQ_Register) {
-  //   const hashedPassword = await argon.hash(dto.password);
-  //   return this.prismaService.user.create({
-  //     data: {
-  //       numberPhone: dto.numberPhone,
-  //       password: hashedPassword,
-  //       fullName: '',
-  //       address: '',
-  //       username: '',
-  //       companyId: 1,
-  //     },
-  //     select: {
-  //       id: true,
-  //       numberPhone: true,
-  //       createdAt: true,
-  //     },
-  //   });
-  // }
-
-  // async userPhoneLogin(dto: DTO_RQ_PhoneLogin) {
-  //   console.log(dto);
-  //   const user = await this.prismaService.user.findFirst({
-  //     where: {
-  //       numberPhone: dto.numberPhone,
-  //     },
-  //   });
-  //   if (!user) {
-  //     throw new Error('Số điện thoại chưa được đăng ký!');
-  //   }
-  //   const passwordMatch = await argon.verify(user.password, dto.password);
-  //   if (!passwordMatch) {
-  //     throw new Error('Mật khẩu không chính xác');
-  //   }
-  //   return await this.signJwtToken(user.id);
-  // }
   async superAdminLogin(dto: DTO_RQ_SuperAdminLogin) {
     console.log(dto);
+  }
+  async googleLogin(dto: DTO_RQ_GoogleLogin): Promise<DTO_RP_GoogleLogin> {
+    try {
+      console.log('Received access token:', dto.accessToken);
+      const response = await fetch(
+        'https://www.googleapis.com/oauth2/v2/userinfo',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${dto.accessToken}`,
+          },
+        },
+      );
+      const userData = await response.json();
+      console.log('Google user data:', userData);
+      if (!response.ok || !userData.email) {
+        throw new UnauthorizedException('Invalid Google token');
+      }
+
+      let user = await this.accountRepository.findOne({
+        where: { email: userData.email, account_type: 'GOOGLE' },
+      });
+
+      if (!user) {
+        user = this.accountRepository.create({
+          email: userData.email,
+          name: userData.name,
+          url_avatar: userData.picture,
+          account_type: 'GOOGLE',
+        });
+
+        await this.accountRepository.save(user);
+        console.log('New user created:', user);
+      }
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        url_avatar: user.url_avatar,
+        account_type: user.account_type,
+      };
+    } catch (error) {
+      console.error('Google authentication failed', error);
+      throw new UnauthorizedException('Invalid Google token');
+    }
   }
 }
