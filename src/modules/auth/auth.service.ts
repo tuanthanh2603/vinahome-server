@@ -18,14 +18,21 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signJwtToken(userId: number): Promise<{ accessToken: string }> {
+  async signJwtToken(
+    userId: number,
+    account_type: string,
+    role: number,
+  ): Promise<{ accessToken: string }> {
     const payload = {
       sub: userId,
+      account_type,
     };
+
     const jwtString = await this.jwtService.signAsync(payload, {
       expiresIn: '30m',
       secret: 'CVbn12345',
     });
+
     return {
       accessToken: jwtString,
     };
@@ -62,18 +69,24 @@ export class AuthService {
           name: userData.name,
           url_avatar: userData.picture,
           account_type: 'GOOGLE',
+          role: 1,
         });
 
         await this.accountRepository.save(user);
         console.log('New user created:', user);
       }
-      const { accessToken } = await this.signJwtToken(user.id);
+      const { accessToken } = await this.signJwtToken(
+        user.id,
+        user.account_type,
+        user.role,
+      );
       return {
         id: user.id,
         email: user.email,
         name: user.name,
         url_avatar: user.url_avatar,
         account_type: user.account_type,
+        role: user.role,
         token: accessToken,
       };
     } catch (error) {
