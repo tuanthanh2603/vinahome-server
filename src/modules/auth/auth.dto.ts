@@ -25,4 +25,5 @@ export class DTO_RP_GoogleLogin {
   email: string;
   url_avatar: string;
   account_type: string;
+  token: string;
 }

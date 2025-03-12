@@ -67,12 +67,14 @@ export class AuthService {
         await this.accountRepository.save(user);
         console.log('New user created:', user);
       }
+      const { accessToken } = await this.signJwtToken(user.id);
       return {
         id: user.id,
         email: user.email,
         name: user.name,
         url_avatar: user.url_avatar,
         account_type: user.account_type,
+        token: accessToken,
       };
     } catch (error) {
       console.error('Google authentication failed', error);
