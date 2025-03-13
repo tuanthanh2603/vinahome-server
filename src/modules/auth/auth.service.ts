@@ -26,6 +26,7 @@ export class AuthService {
     const payload = {
       sub: userId,
       account_type,
+      role,
     };
 
     const jwtString = await this.jwtService.signAsync(payload, {
