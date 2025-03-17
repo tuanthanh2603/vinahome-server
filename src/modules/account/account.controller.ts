@@ -45,4 +45,28 @@ export class AccountController {
       );
     }
   }
+
+  // Function: Update Avatar Account
+  @Put('/update-avatar-account/:userId')
+  async updateAvatarAccount(
+    @Param('userId') userId: number,
+    @Body() body: { url_avatar: string },
+  ) {
+    try {
+      console.log('User ID:', userId);
+      console.log('Avatar:', body.url_avatar);
+
+      const response = await this.accountService.updateAvatarAccount(
+        userId,
+        body.url_avatar,
+      );
+      return ApiResponse.success(response);
+    } catch (error) {
+      console.error('Error updating avatar account:', error);
+      return ApiResponse.error(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

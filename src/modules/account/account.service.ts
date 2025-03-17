@@ -63,4 +63,20 @@ export class AccountService {
       account_type: updatedAccount.account_type,
     };
   }
+  async updateAvatarAccount(
+    userId: number,
+    url_avatar: string,
+  ): Promise<DTO_RP_AccountCustomerInfo> {
+    const user = await this.accountRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.url_avatar = url_avatar;
+    return this.accountRepository.save(user);
+    // return null;
+  }
 }
