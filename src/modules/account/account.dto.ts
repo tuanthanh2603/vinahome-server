@@ -47,3 +47,12 @@ export class DTO_RQ_AccountCustomerInfo {
   account_type: string;
   name: string;
 }
+export class DTO_RP_AccountByCompanyBus {
+  id: number;
+  name: string;
+  username: string;
+  phone: string;
+  gender: number;
+  role: number;
+  email: string;
+}

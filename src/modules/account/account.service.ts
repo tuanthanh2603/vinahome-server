@@ -5,6 +5,7 @@ import { Account } from './account.entity';
 import {
   DTO_RQ_AccountCustomerInfo,
   DTO_RP_AccountCustomerInfo,
+  DTO_RP_AccountByCompanyBus,
 } from './account.dto';
 
 @Injectable()
@@ -77,6 +78,23 @@ export class AccountService {
 
     user.url_avatar = url_avatar;
     return this.accountRepository.save(user);
-    // return null;
+  }
+
+  async getListAccountByCompany(
+    companyId: number,
+  ): Promise<DTO_RP_AccountByCompanyBus[]> {
+    const accounts = await this.accountRepository.find({
+      where: { id: companyId },
+      order: { created_at: 'DESC' },
+    });
+    return accounts.map((account) => ({
+      id: account.id,
+      name: account.name,
+      email: account.email,
+      role: account.role,
+      username: account.username,
+      phone: account.phone,
+      gender: account.gender,
+    }));
   }
 }

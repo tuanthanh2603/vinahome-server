@@ -69,4 +69,21 @@ export class AccountController {
       );
     }
   }
+
+  // [E2.US07] Filter/Get List Account By Company
+  @Get('/get-list-account-by-company/:companyId')
+  async getListAccountByCompany(@Param('companyId') companyId: number) {
+    try {
+      console.log('Company ID:', companyId);
+      const response =
+        await this.accountService.getListAccountByCompany(companyId);
+      return ApiResponse.success(response);
+    } catch (error) {
+      console.error('Error getting list account by company:', error);
+      return ApiResponse.error(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

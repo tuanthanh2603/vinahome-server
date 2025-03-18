@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Company } from './company.entity';
 import { DTO_RP_Company, DTO_RQ_Company } from './company.dto';
 
+
 @Injectable()
 export class CompanyService {
   constructor(
