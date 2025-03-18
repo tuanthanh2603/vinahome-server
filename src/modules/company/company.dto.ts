@@ -5,9 +5,6 @@ export class DTO_RQ_Company {
   address: string;
   tax_code: string;
   status: boolean;
-  province: number;
-  district: number;
-  ward: number;
   url_logo: string;
   code: string;
   note: string;
@@ -20,9 +17,6 @@ export class DTO_RP_Company {
   address: string;
   tax_code: string;
   status: boolean;
-  province: number;
-  district: number;
-  ward: number;
   url_logo: string;
   code: string;
   note: string;

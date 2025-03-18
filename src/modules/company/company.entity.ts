@@ -22,12 +22,6 @@ export class Company {
   @Column()
   status: boolean;
   @Column()
-  province: number;
-  @Column()
-  district: number;
-  @Column()
-  ward: number;
-  @Column()
   url_logo: string;
   @Column()
   code: string;
